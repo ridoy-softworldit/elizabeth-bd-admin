@@ -1,0 +1,98 @@
+@media print {
+  @page {
+    margin: 0.5in;
+    size: A4;
+  }
+  
+  body {
+    font-family: 'Arial', sans-serif !important;
+    font-size: 10pt !important;
+    line-height: 1.2 !important;
+    color: #000 !important;
+    background: white !important;
+  }
+  
+  .receipt-content {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+  }
+  
+  .receipt-header {
+    text-align: center !important;
+    border-bottom: 2px solid #000 !important;
+    padding-bottom: 10px !important;
+    margin-bottom: 15px !important;
+  }
+  
+  .receipt-header h1 {
+    font-size: 20pt !important;
+    font-weight: bold !important;
+    margin: 0 !important;
+  }
+  
+  .receipt-header p {
+    font-size: 12pt !important;
+    margin: 2px 0 !important;
+  }
+  
+  .receipt-info {
+    display: flex !important;
+    justify-content: space-between !important;
+    margin-bottom: 15px !important;
+  }
+  
+  .receipt-section {
+    margin-bottom: 15px !important;
+  }
+  
+  .receipt-section h3 {
+    font-size: 12pt !important;
+    font-weight: bold !important;
+    margin: 0 0 5px 0 !important;
+    padding: 3px 0 !important;
+    border-bottom: 1px solid #000 !important;
+  }
+  
+  .receipt-table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    margin: 10px 0 !important;
+  }
+  
+  .receipt-table th,
+  .receipt-table td {
+    padding: 5px !important;
+    border: 1px solid #000 !important;
+    font-size: 9pt !important;
+    text-align: left !important;
+  }
+  
+  .receipt-table th {
+    background-color: #f0f0f0 !important;
+    font-weight: bold !important;
+  }
+  
+  .receipt-total {
+    text-align: right !important;
+    margin-top: 15px !important;
+    padding-top: 10px !important;
+    border-top: 2px solid #000 !important;
+  }
+  
+  .receipt-total .total-row {
+    display: flex !important;
+    justify-content: space-between !important;
+    margin: 3px 0 !important;
+  }
+  
+  .receipt-total .final-total {
+    font-size: 14pt !important;
+    font-weight: bold !important;
+    border-top: 1px solid #000 !important;
+    padding-top: 5px !important;
+    margin-top: 5px !important;
+  }
+}
