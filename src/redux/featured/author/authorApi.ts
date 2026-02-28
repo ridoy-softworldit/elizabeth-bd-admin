@@ -17,6 +17,7 @@ export const authorApi = baseApi.injectEndpoints({
         method: "GET",
       }),
       transformResponse: (response: { data: TAuthor[] }) => response.data,
+      providesTags: ["Author"],
     }),
 
     // ✅ Get single author by ID
@@ -26,6 +27,7 @@ export const authorApi = baseApi.injectEndpoints({
         method: "GET",
       }),
       transformResponse: (response: { data: TAuthor }) => response.data,
+      providesTags: (result, error, id) => [{ type: "Author", id }],
     }),
 
     // ✅ Create new author
@@ -35,6 +37,7 @@ export const authorApi = baseApi.injectEndpoints({
         method: "POST",
         body: formData,
       }),
+      invalidatesTags: ["Author"],
     }),
 
     // ✅ Update author
@@ -45,6 +48,7 @@ export const authorApi = baseApi.injectEndpoints({
           method: "PATCH",
           body: formData,
         }),
+        invalidatesTags: (result, error, { id }) => ["Author", { type: "Author", id }],
       }
     ),
 
@@ -54,6 +58,7 @@ export const authorApi = baseApi.injectEndpoints({
         url: `/author/${id}`,
         method: "DELETE",
       }),
+      invalidatesTags: ["Author"],
     }),
 
     // ✅ Follow author
@@ -62,6 +67,7 @@ export const authorApi = baseApi.injectEndpoints({
         url: `/author/${id}/follow`,
         method: "PATCH",
       }),
+      invalidatesTags: (result, error, id) => [{ type: "Author", id }],
     }),
   }),
 });

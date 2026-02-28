@@ -43,5 +43,9 @@ export const baseApi = createApi({
     "Footer",
     "DynamicPage",
     "Brand",
+    "Author",
   ],
+  refetchOnMountOrArgChange: true,
+  refetchOnFocus: true,
+  refetchOnReconnect: true,
 });

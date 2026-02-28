@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import slugify from "slugify";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Save } from "lucide-react";
+import { Plus, Save } from "lucide-react";
 
 import { Button } from "../ui/button";
 import { ImageUploader } from "../shared/ImageUploader";
@@ -46,6 +46,10 @@ import { Switch } from "@radix-ui/react-switch";
 import { LabelGalleryUploader } from "../shared/LabelGalleryUploader";
 import { useGetAllAuthorsQuery } from "@/redux/featured/author/authorApi";
 import { useGetAllParentCategoriesQuery } from "@/redux/featured/parentCategory/parentCategoryApi";
+import CreateCategoryModal from "../modals/CreateCategoryModal";
+import CreateBrandModal from "../modals/CreateBrandModal";
+import CreateTagModal from "../modals/CreateTagModal";
+import CreateAuthorModal from "../modals/CreateAuthorModal";
 
 export type Option = {
   value: string;
@@ -59,16 +63,20 @@ export default function AddProductForm() {
   const router = useRouter();
   const dispatch = useAppDispatch();
   const [createProduct] = useCreateProductMutation();
-  const { data: categoriesData, isLoading: isCategoriesLoading } =
+  const { data: categoriesData, isLoading: isCategoriesLoading, refetch: refetchCategories } =
     useGetAllCategoriesQuery(undefined);
-  const { data: tagsData, isLoading: isTagsLoading } =
+  const { data: tagsData, isLoading: isTagsLoading, refetch: refetchTags } =
     useGetAlltagsQuery(undefined);
-  const { data: brands, isLoading: isBrandsLoading } =
+  const { data: brands, isLoading: isBrandsLoading, refetch: refetchBrands } =
     useGetAllbrandsQuery(undefined);
-  const { data: authors, isLoading: isAuthorsLoading } =
+  const { data: authors, isLoading: isAuthorsLoading, refetch: refetchAuthors } =
     useGetAllAuthorsQuery(undefined);
 
   const [activeTab, setActiveTab] = useState<"book" | "non-book">("book");
+  const [showCategoryModal, setShowCategoryModal] = useState(false);
+  const [showBrandModal, setShowBrandModal] = useState(false);
+  const [showTagModal, setShowTagModal] = useState(false);
+  const [showAuthorModal, setShowAuthorModal] = useState(false);
   // const { data: shopData, isLoading: isShopDataLoading } =
   //   useGetAllShopsQuery();
 
@@ -253,33 +261,46 @@ export default function AddProductForm() {
     if (tagsData) {
       dispatch(setTags(tagsData));
     }
-    // if (categoriesData) {
-    //   dispatch(setCategories(categoriesData));
-    // }
+    if (categoriesData) {
+      dispatch(setCategories(categoriesData));
+    }
   }, [dispatch, tagsData, categoriesData]);
 
-  const simplifiedBrand: Option[] =
-    brands?.map((cat: any) => ({
-      value: cat._id,
-      label: cat.name,
-    })) ?? [];
+  const simplifiedBrand: Option[] = useMemo(
+    () =>
+      brands?.map((cat: any) => ({
+        value: cat._id,
+        label: cat.name,
+      })) ?? [],
+    [brands]
+  );
 
-  const simplifiedCategories: Option[] =
-    categoriesData?.map((cat: any) => ({
-      value: cat._id,
-      label: cat.name,
-    })) ?? [];
+  const simplifiedCategories: Option[] = useMemo(
+    () =>
+      categoriesData?.map((cat: any) => ({
+        value: cat._id,
+        label: cat.name,
+      })) ?? [],
+    [categoriesData]
+  );
 
-  const simplifiedTags: Option[] =
-    tagsData?.map((tag: any) => ({
-      value: tag._id,
-      label: tag.name,
-    })) ?? [];
-  const simplifiedAuthors: Option[] =
-    authors?.map((tag: any) => ({
-      value: tag._id,
-      label: tag.name,
-    })) ?? [];
+  const simplifiedTags: Option[] = useMemo(
+    () =>
+      tagsData?.map((tag: any) => ({
+        value: tag._id,
+        label: tag.name,
+      })) ?? [],
+    [tagsData]
+  );
+
+  const simplifiedAuthors: Option[] = useMemo(
+    () =>
+      authors?.map((author: any) => ({
+        value: author._id,
+        label: author.name,
+      })) ?? [],
+    [authors]
+  );
 
   const subCategoryOptions: Option[] = selectedCategorySubCategories.map(
     (subCat) => ({
@@ -290,6 +311,10 @@ export default function AddProductForm() {
 
   return (
     <div>
+      <CreateCategoryModal isOpen={showCategoryModal} onClose={() => setShowCategoryModal(false)} onSuccess={refetchCategories} />
+      <CreateBrandModal isOpen={showBrandModal} onClose={() => setShowBrandModal(false)} onSuccess={refetchBrands} />
+      <CreateTagModal isOpen={showTagModal} onClose={() => setShowTagModal(false)} onSuccess={refetchTags} />
+      <CreateAuthorModal isOpen={showAuthorModal} onClose={() => setShowAuthorModal(false)} onSuccess={refetchAuthors} />
       <div className="lg:sticky lg:top-0 lg:z-10 mb-8 bg-gradient-to-r from-blue-50 to-purple-50 py-2 rounded-xl shadow-md border-2 border-blue-200">
         <div className="flex flex-col lg:flex-row items-center justify-center gap-4">
           <p className="sm:text-md font-medium text-gray-600">Select Product Type:</p>
@@ -1019,7 +1044,16 @@ export default function AddProductForm() {
                 name="productInfo.brand"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Brand</FormLabel>{" "}
+                    <div className="flex items-center justify-between">
+                      <FormLabel>Brand</FormLabel>
+                      <button
+                        type="button"
+                        onClick={() => setShowBrandModal(true)}
+                        className="text-blue-600 hover:text-blue-700 p-1 rounded-full hover:bg-blue-50"
+                      >
+                        <Plus className="w-4 h-4" />
+                      </button>
+                    </div>{" "}
                     <Select onValueChange={field.onChange} defaultValue={""}>
                       <FormControl>
                         <SelectTrigger>
@@ -1086,9 +1120,18 @@ export default function AddProductForm() {
                 name="categoryAndTags.categories"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
-                      Categories <span className="text-red-500 text-lg">*</span>
-                    </FormLabel>
+                    <div className="flex items-center justify-between">
+                      <FormLabel>
+                        Categories <span className="text-red-500 text-lg">*</span>
+                      </FormLabel>
+                      <button
+                        type="button"
+                        onClick={() => setShowCategoryModal(true)}
+                        className="text-blue-600 hover:text-blue-700 p-1 rounded-full hover:bg-blue-50"
+                      >
+                        <Plus className="w-4 h-4" />
+                      </button>
+                    </div>
                     <FormControl>
                       {isCategoriesLoading ? (
                         <Input
@@ -1185,9 +1228,18 @@ export default function AddProductForm() {
                 name="categoryAndTags.tags"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
-                      Tags
-                    </FormLabel>
+                    <div className="flex items-center justify-between">
+                      <FormLabel>
+                        Tags
+                      </FormLabel>
+                      <button
+                        type="button"
+                        onClick={() => setShowTagModal(true)}
+                        className="text-blue-600 hover:text-blue-700 p-1 rounded-full hover:bg-blue-50"
+                      >
+                        <Plus className="w-4 h-4" />
+                      </button>
+                    </div>
                     <FormControl>
                       {isTagsLoading ? (
                         <Input
@@ -1507,7 +1559,16 @@ export default function AddProductForm() {
                     name="bookInfo.specification.authors"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Authors Name</FormLabel>
+                        <div className="flex items-center justify-between">
+                          <FormLabel>Authors Name</FormLabel>
+                          <button
+                            type="button"
+                            onClick={() => setShowAuthorModal(true)}
+                            className="text-blue-600 hover:text-blue-700 p-1 rounded-full hover:bg-blue-50"
+                          >
+                            <Plus className="w-4 h-4" />
+                          </button>
+                        </div>
                         <FormControl>
                           {isAuthorsLoading ? (
                             <Input
