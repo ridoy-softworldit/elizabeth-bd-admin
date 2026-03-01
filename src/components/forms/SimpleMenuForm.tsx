@@ -39,6 +39,7 @@ export default function SimpleMenuForm({ editingData, onSuccess, onCancel }: Sim
 
   const [menuTitle, setMenuTitle] = useState(editingData?.menu?.menuTitle || "");
   const [menuOrder, setMenuOrder] = useState(editingData?.menu?.order || 1);
+  const [isGuideExpanded, setIsGuideExpanded] = useState(false);
   const [submenus, setSubmenus] = useState<SubmenuItem[]>(
     editingData?.menu?.submenus?.map((sub: any) => ({
       title: sub.title,
@@ -255,20 +256,64 @@ export default function SimpleMenuForm({ editingData, onSuccess, onCancel }: Sim
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Submenus */}
+          <div className="space-y-3">
+            <div className="bg-gray-50 border border-gray-200 rounded-lg text-sm">
+              <button
+                type="button"
+                onClick={() => setIsGuideExpanded(!isGuideExpanded)}
+                className="w-full flex justify-between items-center p-3 hover:bg-gray-100 transition-colors"
+              >
+                <p className="font-semibold text-green-600">📋 মেনু এবং সাবমেনু বানানোর গাইড</p>
+                <span className="text-gray-600">{isGuideExpanded ? '▲' : '▼'}</span>
+              </button>
+              {isGuideExpanded && (
+                <div className="p-3 pt-0">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <p className="font-semibold text-gray-900 mb-1">* নীতিমালা</p>
+                      <ul className="space-y-1 text-blue-700">
+                        <li>✅ শর্তাবলী - /terms-and-conditions</li>
+                        <li>✅ প্রাইভেসি পলিসি - /privacy-policy</li>
+                        <li>✅ রিটার্ন পলিসি - /return-policy</li>
+                        <li>✅ রিফান্ড পলিসি - /refund-policy</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <p className="font-semibold text-gray-900 mb-1">* আমাদের সম্পর্কে জানুন</p>
+                      <ul className="space-y-1 text-blue-700">
+                        <li>✅ আমাদের সম্পর্কে - /about-us</li>
+                        <li>✅ যোগাযোগ করুন - /contact-us</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <p className="font-semibold text-gray-900 mb-1">* সাপোর্ট</p>
+                      <ul className="space-y-1 text-blue-700">
+                        <li>✅ অর্ডার ট্র্যাকিং - /dashboard/orders</li>
+                        <li>✅ সাধারণ প্রশ্ন - /faq</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+          <div className="flex flex-col sm:flex-row gap-4 items-start">
           {/* Menu Details */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="menuTitle">Menu Title *</Label>
+          <div className="flex flex-col sm:flex-row gap-4 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-300 rounded-lg p-4 w-full sm:w-1/2">
+            <div className="flex-1">
+              <Label htmlFor="menuTitle" className="font-semibold text-green-900">Menu Title *</Label>
               <Input
                 id="menuTitle"
                 value={menuTitle}
                 onChange={(e) => setMenuTitle(e.target.value)}
                 placeholder="e.g., আমাদের সম্পর্কে জানুন"
+                className="placeholder:opacity-30"
                 required
               />
             </div>
-            <div>
-              <Label htmlFor="menuOrder">Display Order</Label>
+            <div className="w-full sm:w-32">
+              <Label htmlFor="menuOrder" className="font-semibold text-green-900">Display Order</Label>
               <Input
                 id="menuOrder"
                 type="number"
@@ -279,20 +324,16 @@ export default function SimpleMenuForm({ editingData, onSuccess, onCancel }: Sim
             </div>
           </div>
 
-          {/* Submenus */}
-          <div className="space-y-3">
-            <div className="flex justify-between items-center">
-              <Label className="text-lg font-semibold text-gray-800 bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">Submenus</Label>
-              <Button 
-                type="button" 
-                size="sm"
-                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0 shadow-sm hover:shadow-md transition-all duration-200"
-                onClick={addSubmenu}
-              >
-                <Plus className="w-3 h-3 mr-1" />
-                Add Submenu
-              </Button>
-            </div>
+          <Button 
+            type="button" 
+            size="sm"
+            className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white border-0 shadow-sm hover:shadow-md transition-all duration-200 mt-7"
+            onClick={addSubmenu}
+          >
+            <Plus className="w-3 h-3 mr-1" />
+            Add Submenu
+          </Button>
+          </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
               {submenus.map((submenu, index) => (
@@ -318,6 +359,7 @@ export default function SimpleMenuForm({ editingData, onSuccess, onCancel }: Sim
                         value={submenu.title}
                         onChange={(e) => updateSubmenu(index, "title", e.target.value)}
                         placeholder="e.g., আমাদের সম্পর্কে"
+                        className="placeholder:opacity-30"
                         required
                       />
                     </div>
@@ -347,6 +389,7 @@ export default function SimpleMenuForm({ editingData, onSuccess, onCancel }: Sim
                         value={submenu.url}
                         onChange={(e) => updateSubmenu(index, "url", e.target.value)}
                         placeholder="/about-us/ or https://external-site.com"
+                        className="placeholder:opacity-30"
                         required
                       />
                     </div>
@@ -382,6 +425,7 @@ export default function SimpleMenuForm({ editingData, onSuccess, onCancel }: Sim
                             value={submenu.pageTitle}
                             onChange={(e) => updateSubmenu(index, "pageTitle", e.target.value)}
                             placeholder="Page title"
+                            className="placeholder:opacity-30"
                             required
                           />
                         </div>
@@ -391,6 +435,7 @@ export default function SimpleMenuForm({ editingData, onSuccess, onCancel }: Sim
                             value={submenu.pageSlug}
                             onChange={(e) => updateSubmenu(index, "pageSlug", e.target.value)}
                             placeholder="page-slug"
+                            className="placeholder:opacity-30"
                             required
                           />
                         </div>
@@ -411,6 +456,7 @@ export default function SimpleMenuForm({ editingData, onSuccess, onCancel }: Sim
                           value={submenu.pageContent}
                           onChange={(e) => updateSubmenu(index, "pageContent", e.target.value)}
                           placeholder="Enter the content for this page..."
+                          className="placeholder:opacity-30"
                           rows={4}
                           required
                         />
