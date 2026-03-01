@@ -1282,39 +1282,21 @@ export default function AddProductForm() {
               <div className="space-y-4">
                 <h2 className="text-xl font-semibold">Book Details</h2>
 
-                {/* Publisher */}
-                <FormField
-                  control={form.control}
-                  name="bookInfo.specification.publisher"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Publisher</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter publisher name" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                {/* <FormField
-              control={form.control}
-              name="categoryAndTags.publisher"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Publisher</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter publisher name for catagory tag"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            /> */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="bookInfo.specification.publisher"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Publisher <span className="text-red-500 text-lg">*</span></FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter publisher name" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Edition */}
                   <FormField
                     control={form.control}
                     name="bookInfo.specification.edition"
@@ -1329,7 +1311,6 @@ export default function AddProductForm() {
                     )}
                   />
 
-                  {/* Edition Year */}
                   <FormField
                     control={form.control}
                     name="bookInfo.specification.editionYear"
@@ -1355,7 +1336,7 @@ export default function AddProductForm() {
                   />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <FormField
                     control={form.control}
                     name="bookInfo.format"
@@ -1412,14 +1393,14 @@ export default function AddProductForm() {
                   />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {/* Number of Pages */}
                   <FormField
                     control={form.control}
                     name="bookInfo.specification.numberOfPages"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Number of Pages</FormLabel>
+                        <FormLabel>Number of Pages <span className="text-red-500 text-lg">*</span></FormLabel>
                         <FormControl>
                           <Input
                             type="number"
@@ -1444,7 +1425,7 @@ export default function AddProductForm() {
                     name="bookInfo.specification.country"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Country</FormLabel>
+                        <FormLabel>Country <span className="text-red-500 text-lg">*</span></FormLabel>
                         <FormControl>
                           <Input placeholder="Enter country" {...field} />
                         </FormControl>
@@ -1459,7 +1440,7 @@ export default function AddProductForm() {
                     name="bookInfo.specification.language"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Language</FormLabel>
+                        <FormLabel>Language <span className="text-red-500 text-lg">*</span></FormLabel>
                         <FormControl>
                           <Input placeholder="e.g., English" {...field} />
                         </FormControl>
@@ -1469,7 +1450,7 @@ export default function AddProductForm() {
                   />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <FormField
                     control={form.control}
                     name="bookInfo.specification.isbn"
@@ -1489,7 +1470,7 @@ export default function AddProductForm() {
                     name="bookInfo.specification.binding"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Binding</FormLabel>
+                        <FormLabel>Binding <span className="text-red-500 text-lg">*</span></FormLabel>
                         <FormControl>
                           <Select
                             onValueChange={field.onChange}
@@ -1512,55 +1493,47 @@ export default function AddProductForm() {
                       </FormItem>
                     )}
                   />
+
+                  <FormField
+                    control={form.control}
+                    name="bookInfo.genre"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Book Info genre</FormLabel>
+                        <FormControl>
+                          <MultipleSelector
+                            value={field.value.map((keyword) => ({
+                              label: keyword,
+                              value: keyword,
+                            }))}
+                            onChange={(options) =>
+                              field.onChange(options.map((opt) => opt.value))
+                            }
+                            defaultOptions={[]}
+                            creatable
+                            placeholder="Type a keyword and press Enter to add..."
+                            emptyIndicator={
+                              <p className="text-center text-sm">
+                                Type your keyword and press Enter.
+                              </p>
+                            }
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
 
-                <FormField
-                  control={form.control}
-                  name="bookInfo.genre" // অথবা "categoryAndTags.genre"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Book Info genre</FormLabel>
-                      <FormControl>
-                        {/* isKeywordsLoading/isGenreLoading - যদি লোডিং স্টেট থাকে তবে সেটি ব্যবহার করুন */}
-                        <MultipleSelector
-                          // 1. 'value' prop: field.value (যা একটি [String] অ্যারে) কে
-                          //    MultipleSelector-এর অপশন ফরমেটে কনভার্ট করুন।
-                          //    (সাধারণত { label: string, value: string } ফরমেট লাগে)
-                          value={field.value.map((keyword) => ({
-                            label: keyword,
-                            value: keyword,
-                          }))}
-                          // 2. 'onChange' prop: ইউজার-সিলেক্টেড অপশন অ্যারে থেকে
-                          //    শুধুমাত্র ভ্যালু (string) বের করে field.onChange-এ পাঠান।
-                          onChange={(options) =>
-                            field.onChange(options.map((opt) => opt.value))
-                          }
-                          // 3. কোনো ডিফল্ট অপশন নেই। এটিই ইউজারকে নতুন ইনপুট দিতে বাধ্য করবে।
-                          defaultOptions={[]}
-                          // 4. ✅ নতুন আইটেম যোগ করার অনুমতি দিন
-                          creatable // <--- এটিই মূল চাবিকাঠি
-                          placeholder="Type a keyword and press Enter to add..."
-                          emptyIndicator={
-                            <p className="text-center text-sm">
-                              Type your keyword and press Enter.
-                            </p>
-                          }
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
                 {/* Authors Section */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   <FormField
                     control={form.control}
                     name="bookInfo.specification.authors"
                     render={({ field }) => (
                       <FormItem>
                         <div className="flex items-center justify-between">
-                          <FormLabel>Authors Name</FormLabel>
+                          <FormLabel>Authors Name <span className="text-red-500 text-lg">*</span></FormLabel>
                           <button
                             type="button"
                             onClick={() => setShowAuthorModal(true)}
